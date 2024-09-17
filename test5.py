@@ -124,8 +124,8 @@ def play_round(player, difficulty):
     guess = input("\n🧠 Guess the cocktail: ").strip()
 
     # Calculate score with penalty for hints used
-    base_score = 1  # Full point for a correct guess
-    score_penalty = 0.5 * hints_used  # Reduce score by 0.5 per hint used
+    base_score = 10  # Full point for a correct guess
+    score_penalty = 2 * hints_used  # Reduce score by 0.5 per hint used
     final_score = max(0.0, base_score - score_penalty)
 
     # Check if the guess is correct
