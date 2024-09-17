@@ -1,52 +1,7 @@
-import wptools
-import os
+import requests
+from bs4 import BeautifulSoup
 import random
 from cocktails import cocktails
-
-
-def get_cocktail_ingredients(cocktail_wikipedia):
-    """
-    Fetches and cleans cocktail ingredients from Wikipedia.
-
-    Args:
-        cocktail_wikipedia (str): The Wikipedia page title for the cocktail.
-
-    Returns:
-        list: A list of cleaned ingredients if found, otherwise None.
-    """
-    try:
-        # Fetch the Wikipedia page
-        page = wptools.page(cocktail_wikipedia).get_parse(show=False)
-        ingredients = page.data['infobox']["ingredients"]
-
-        # Clean the ingredients by removing unwanted characters
-        cleaned_ingredients = [
-            ingredient.replace("&nbsp;", " ").replace("[[", "").replace("]]", "").strip()
-            for ingredient in ingredients.split("\n")
-        ]
-
-        return cleaned_ingredients if cleaned_ingredients else None
-    except KeyError:
-        print(f"No ingredients found in the infobox for {cocktail_wikipedia}.")
-        return None
-    except Exception as e:
-        print(f"Error fetching cocktail ingredients: {e}")
-        return None
-
-
-def get_cocktail_hint(cocktail_wikipedia):
-    try:
-        # Fetch the page data from Wikipedia
-        page = wptools.page(cocktail_wikipedia).get_parse()
-        hint = page.data.get('infobox', {}).get('origin')
-
-        if not hint:
-            return "Hint not available for this cocktail."
-
-        return f"Hint: This cocktail originated from {hint}."
-    except Exception as e:
-        print(f"Error fetching hint for {cocktail_wikipedia}: {e}")
-        return "Hint not available."
 
 
 def display_game_instructions():
@@ -70,11 +25,93 @@ Scoring:
 ❌ Wrong guess: No points for that round.
 
 Tips:
-🧠 Think carefully before using a hint—sometimes the ingredients might be all you need!
+🧠 Think carefully before using a hint — sometimes the ingredients might be all you need!😉:
 
 ==================================================
 Let's get started!
 """)
+
+
+def get_cocktail_ingredients(cocktail_wikipedia):
+    """
+    Fetches and cleans cocktail ingredients from Wikipedia.
+
+    Args:
+        cocktail_wikipedia (str): The Wikipedia page title for the cocktail.
+
+    Returns:
+        list: A list of cleaned ingredients if found, otherwise None.
+    """
+    try:
+        url = f"https://en.wikipedia.org/wiki/{cocktail_wikipedia}"
+        response = requests.get(url)
+        response.raise_for_status()  # Check for request errors
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        infobox = soup.find('table', {'class': 'infobox'})
+
+        if not infobox:
+            return None
+
+        ingredients = []
+        for row in infobox.find_all('tr'):
+            header = row.find('th')
+            if header and 'ingredients' in header.get_text().lower():
+                content = row.find('td')
+                if content:
+                    for item in content.find_all(['li', 'p']):
+                        text = item.get_text(strip=True)
+                        if text:
+                            ingredients.append(text)
+
+        return ingredients if ingredients else None
+    except Exception as e:
+        print(f"Error fetching ingredients: {e}")
+        return None
+
+
+def get_cocktail_hint(cocktail_name):
+    length = f"The name of cocktail contains {len(cocktail_name.split(" "))}  word/s"
+    first_letter = f"The first letter of cocktails name is '{cocktail_name[0].upper()}'"
+    hints = [length, first_letter]
+    return hints
+
+
+def provide_hints(cocktail_name, max_hints):
+    """
+    Handles the process of asking the player if they would like a hint
+    and providing hints from Wikipedia up to a maximum limit.
+
+    Args:
+    cocktail_wikipedia (str): Wikipedia title of the cocktail to fetch hints for.
+    max_hints (int): Maximum number of hints to provide to the player. Default is 2.
+
+    Returns:
+    int: The number of hints used by the player.
+    """
+    hints_used = 0
+    hints = get_cocktail_hint(cocktail_name)
+
+    if not hints or len(hints) < max_hints:
+        print("No hints available for this cocktail.")
+        return hints_used
+
+    while hints_used < max_hints:
+        ask_hint = input("\n💡 Would you like a hint? (y/n): ").strip().lower()
+
+        if ask_hint == 'y':
+            if hints_used < len(hints):
+                print(f"\n💡 Hint {hints_used + 1}: {hints[hints_used]}")
+                hints_used += 1
+            else:
+                print("\n❌ No more hints available.")
+                break
+        elif ask_hint == 'n':
+            break
+        else:
+            print("❌ Invalid input. Please enter 'y' or 'n'.")
+
+    return hints_used
 
 
 def play_round(player, difficulty):
@@ -100,30 +137,20 @@ def play_round(player, difficulty):
         print(f"Could not find ingredients for {cocktail_name}. Skipping...")
         return 0
 
-    print(f"\n{player}, here are the ingredients for this cocktail:")
+    print(f"\n{player}, here are the ingredients for this cocktail:\n")
     for ingredient in ingredients:
         print(f"- {ingredient}")
 
     # Allow player to request hints
-    hints_used = 0
     max_hints = 2
-    while True:
-        ask_hint = input("\n💡 Would you like a hint? (y/n): ").strip().lower()
-        if ask_hint == 'y' and hints_used < max_hints:
-            hints = get_cocktail_hint(cocktail_wikipedia)
-            print("\n💡 Hint: ", random.choice(hints))
-            hints_used += 1
-        elif ask_hint == 'n' or hints_used == max_hints:
-            break
-        else:
-            print("❌ Invalid input or max hints used.")
+    hints_used = provide_hints(cocktail_name, max_hints)
 
     # Get the player's guess
     guess = input("\n🧠 Guess the cocktail: ").strip()
 
     # Calculate score with penalty for hints used
-    base_score = 1  # Full point for a correct guess
-    score_penalty = 0.5 * hints_used  # Reduce score by 0.5 per hint used
+    base_score = 10  # Full point for a correct guess
+    score_penalty = 2 * hints_used  # Reduce score by 0.5 per hint used
     final_score = max(0.0, base_score - score_penalty)
 
     # Check if the guess is correct
@@ -216,10 +243,6 @@ def display_leaderboard(scores):
     for player, score in sorted_scores:
         print(f"{player}: {score} points")
 
-    #winner = sorted_scores[0]
-    #print(f"\nThe 🎯winner is {winner[0]} with {winner[1]} points! Congratulations!")
-    #print("Thanks for playing Cocktail Connoisseur! 🍹")
-
 
 def celebrate_winner(players_scores):
     # Find the player(s) with the highest score
@@ -227,18 +250,26 @@ def celebrate_winner(players_scores):
     winners = [player for player, score in players_scores.items() if score == max_score]
 
     if len(winners) == 1:
-        print(f"""
-🎉🎉🎉 CONGRATULATIONS {winners[0]}! 🎉🎉🎉
-🏆 You are the Cocktail Connoisseur Champion! 🏆
-🥂 You scored {players_scores[winners[0]]} points! 🥂
-🍾 Time to celebrate with your favorite drink! 🍾
-""")
+        winner = winners[0]
+        if players_scores[winner] == 0:
+            print(f"""
+    😅 Oh no, {winner}! It looks like you scored 0 points. 😅
+    🍹 Don't worry! Practice makes perfect. 🍹
+    🔄 Why not try again and sharpen your cocktail knowledge? 🔄
+    """)
+        else:
+            print(f"""
+    🎉🎉🎉 CONGRATULATIONS {winner}! 🎉🎉🎉
+    🏆 You are the Cocktail Connoisseur Champion! 🏆
+    🥂 You scored {players_scores[winner]} points! 🥂
+    🍾 Time to celebrate with your favorite drink! 🍾
+    """)
     else:
         print(f"""
-🎉 It's a tie between {', '.join(winners)}! 🎉
-🍸 You all are Cocktail Connoisseur Champions! 🍸
-🥂 Time to celebrate with your favorite drinks! 🥂
-""")
+    🎉 It's a tie between {', '.join(winners)}! 🎉
+    🍸 You all are Cocktail Connoisseur Champions! 🍸
+    🥂 Time to celebrate with your favorite drinks! 🥂
+    """)
 
 
 def play_game():
@@ -274,3 +305,4 @@ def play_game():
 
 if __name__ == "__main__":
     play_game()
+    
