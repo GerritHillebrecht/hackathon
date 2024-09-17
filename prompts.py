@@ -60,10 +60,12 @@ def prompt_difficulty(cocktails: dict):
     """
     while True:
         level_selection = input("Choose a difficulty level (easy, medium, hard): ").strip().lower()
+
         if level_selection not in cocktails:
             print("Invalid input! Please choose easy, medium, or hard.")
-        else:
-            return level_selection
+            continue
+        
+        return level_selection
 
 
 def prompt_number_of_rounds():

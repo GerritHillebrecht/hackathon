@@ -31,6 +31,7 @@ Bob: 8 points
 The winner is Charlie with 12 points! Congratulations!
 """
 
+
 def save_leaderboard(scores: dict, filename="leaderboard.txt"):
     """
     Saves the leaderboard to a file.
