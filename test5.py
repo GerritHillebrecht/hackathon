@@ -43,7 +43,9 @@ def get_cocktail_ingredients(cocktail_wikipedia):
 
 
 def get_cocktail_hint(cocktail_name):
-    #TODO The function get the name of the cocktail and returns the list of hints ( e.i the number of words in the namethe fist and the last letter in the cocktail_name.
+    length = f"The name of cocktail contains {len(cocktail_name.split(" "))}  word/s"
+    first_letter = f"The first letter of cocktails name is '{cocktail_name[0].upper()}'"
+    hints = [length, first_letter]
     return hints
 
 
