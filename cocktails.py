@@ -9,8 +9,8 @@ cocktails = {
             "wikipedia": "Mojito"
         },
         {
-            "name": "Martini",
-            "wikipedia": "Martini_(cocktail)"
+            "name": "Tequila Sunrise",
+            "wikipedia": "Tequila_Sunrise_(cocktail)"
         },
         {
             "name": "Old Fashioned",
@@ -51,10 +51,6 @@ cocktails = {
             "wikipedia": "Mai_Tai"
         },
         {
-            "name": "Tom Collins",
-            "wikipedia": "Tom_Collins"
-        },
-        {
             "name": "Caipirinha",
             "wikipedia": "Caipirinha"
         },
@@ -63,62 +59,70 @@ cocktails = {
             "wikipedia": "Paloma_(cocktail)"
         },
         {
-            "name": "Aviation",
-            "wikipedia": "Aviation_(cocktail)"
-        },
-        {
-            "name": "Sazerac",
-            "wikipedia": "Sazerac"
+            "name": "Pina Colada",
+            "wikipedia": "Piña_Colada"
         },
         {
             "name": "Sex on the Beach",
             "wikipedia": "Sex_on_the_Beach"
         },
         {
-            "name": "French 75",
-            "wikipedia": "French_75_(cocktail)"
-        },
-        {
             "name": "Sidecar",
             "wikipedia": "Sidecar_(cocktail)"
-        }
-    ],
-    "rare": [
-        {
-            "name": "Corpse Reviver #2",
-            "wikipedia": "Corpse_Reviver#Corpse_Reviver_No._2"
         },
         {
-            "name": "Clover Club",
-            "wikipedia": "Clover_Club_(cocktail)"
+            "name": "Mimosa",
+            "wikipedia": "Mimosa_(cocktail)"
+        },
+        {
+            "name": "Espresso Martini",
+            "wikipedia": "Espresso_Martini"
+        },
+        {
+            "name": "Corpse Reviver #2",
+            "wikipedia": "Corpse_Reviver_#2"
+        }
+    ],
+    "hard": [
+        {
+            "name": "Paradise",
+            "wikipedia": "Paradise_(cocktail)"
+        },
+        {
+            "name": "Brandy Crusta",
+            "wikipedia": "Brandy_Crusta"
         },
         {
             "name": "Pisco Sour",
             "wikipedia": "Pisco_sour"
         },
         {
-            "name": "Tuxedo #2",
-            "wikipedia": "Tuxedo_(cocktail)"
-        },
-        {
             "name": "Bijou",
             "wikipedia": "Bijou_(cocktail)"
         },
         {
-            "name": "Vesper Martini",
-            "wikipedia": "Vesper_(cocktail)"
+            "name": "Paper Plane",
+            "wikipedia": "Paper_Plane_(cocktail)"
         },
         {
-            "name": "Death in the Afternoon",
-            "wikipedia": "Death_in_the_Afternoon_(cocktail)"
+            "name": "Hanky Panky",
+            "wikipedia": "Hanky_Panky_(cocktail)"
         },
         {
-            "name": "Oaxaca Old-Fashioned",
-            "wikipedia": "Oaxaca_old-fashioned"
+            "name": "Aviation",
+            "wikipedia": "Aviation_(cocktail)"
         },
         {
-            "name": "Bobby Burns",
-            "wikipedia": "Bobby_Burns_(cocktail)"
+            "name": "Pink Lady",
+            "wikipedia": "Pink_Lady_(cocktail)"
+        },
+        {
+            "name": "Tom and Jerry",
+            "wikipedia": "Tom_and_Jerry_(cocktail)"
+        },
+        {
+            "name": "Monaco",
+            "wikipedia": "Monaco_(cocktail)"
         }
     ]
 }
