@@ -223,18 +223,26 @@ def celebrate_winner(players_scores):
     winners = [player for player, score in players_scores.items() if score == max_score]
 
     if len(winners) == 1:
-        print(f"""
-🎉🎉🎉 CONGRATULATIONS {winners[0]}! 🎉🎉🎉
-🏆 You are the Cocktail Connoisseur Champion! 🏆
-🥂 You scored {players_scores[winners[0]]} points! 🥂
-🍾 Time to celebrate with your favorite drink! 🍾
-""")
+        winner = winners[0]
+        if players_scores[winner] == 0:
+            print(f"""
+    😅 Oh no, {winner}! It looks like you scored 0 points. 😅
+    🍹 Don't worry! Practice makes perfect. 🍹
+    🔄 Why not try again and sharpen your cocktail knowledge? 🔄
+    """)
+        else:
+            print(f"""
+    🎉🎉🎉 CONGRATULATIONS {winner}! 🎉🎉🎉
+    🏆 You are the Cocktail Connoisseur Champion! 🏆
+    🥂 You scored {players_scores[winner]} points! 🥂
+    🍾 Time to celebrate with your favorite drink! 🍾
+    """)
     else:
         print(f"""
-🎉 It's a tie between {', '.join(winners)}! 🎉
-🍸 You all are Cocktail Connoisseur Champions! 🍸
-🥂 Time to celebrate with your favorite drinks! 🥂
-""")
+    🎉 It's a tie between {', '.join(winners)}! 🎉
+    🍸 You all are Cocktail Connoisseur Champions! 🍸
+    🥂 Time to celebrate with your favorite drinks! 🥂
+    """)
 
 
 def play_game():
