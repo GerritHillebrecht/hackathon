@@ -113,6 +113,8 @@ def play_round(player, difficulty):
             hints = get_cocktail_hint(cocktail_wikipedia)
             print("\n💡 Hint: ", hints[hints_used])
             hints_used += 1
+            if hints_used == max_hints:
+                break
         elif ask_hint == 'n' or hints_used == max_hints:
             break
         else:
