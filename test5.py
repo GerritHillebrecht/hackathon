@@ -1,5 +1,5 @@
-import wptools
-import os
+import requests
+from bs4 import BeautifulSoup
 import random
 from cocktails import cocktails
 
@@ -15,38 +15,36 @@ def get_cocktail_ingredients(cocktail_wikipedia):
         list: A list of cleaned ingredients if found, otherwise None.
     """
     try:
-        # Fetch the Wikipedia page
-        page = wptools.page(cocktail_wikipedia).get_parse(show=False)
-        ingredients = page.data['infobox']["ingredients"]
+        url = f"https://en.wikipedia.org/wiki/{cocktail_wikipedia}"
+        response = requests.get(url)
+        response.raise_for_status()  # Check for request errors
 
-        # Clean the ingredients by removing unwanted characters
-        cleaned_ingredients = [
-            ingredient.replace("&nbsp;", " ").replace("[[", "").replace("]]", "").strip()
-            for ingredient in ingredients.split("\n")
-        ]
+        soup = BeautifulSoup(response.text, 'html.parser')
+        infobox = soup.find('table', {'class': 'infobox'})
 
-        return cleaned_ingredients if cleaned_ingredients else None
-    except KeyError:
-        print(f"No ingredients found in the infobox for {cocktail_wikipedia}.")
-        return None
+        if not infobox:
+            return None
+
+        ingredients = []
+        for row in infobox.find_all('tr'):
+            header = row.find('th')
+            if header and 'ingredients' in header.get_text().lower():
+                content = row.find('td')
+                if content:
+                    for item in content.find_all(['li', 'p']):
+                        text = item.get_text(strip=True)
+                        if text:
+                            ingredients.append(text)
+
+        return ingredients if ingredients else None
     except Exception as e:
-        print(f"Error fetching cocktail ingredients: {e}")
+        print(f"Error fetching ingredients: {e}")
         return None
 
 
-def get_cocktail_hint(cocktail_wikipedia):
-    try:
-        # Fetch the page data from Wikipedia
-        page = wptools.page(cocktail_wikipedia).get_parse()
-        hint = page.data.get('infobox', {}).get('origin')
-
-        if not hint:
-            return "Hint not available for this cocktail."
-
-        return f"Hint: This cocktail originated from {hint}."
-    except Exception as e:
-        print(f"Error fetching hint for {cocktail_wikipedia}: {e}")
-        return "Hint not available."
+def get_cocktail_hint(cocktail_name):
+    #TODO The function get the name of the cocktail and returns the list of hints ( e.i the number of words in the namethe fist and the last letter in the cocktail_name.
+    return hints
 
 
 def display_game_instructions():
@@ -111,12 +109,12 @@ def play_round(player, difficulty):
         ask_hint = input("\n💡 Would you like a hint? (y/n): ").strip().lower()
         if ask_hint == 'y' and hints_used < max_hints:
             hints = get_cocktail_hint(cocktail_wikipedia)
-            print("\n💡 Hint: ", random.choice(hints))
+            print("\n💡 Hint: ", hints[hints_used])
             hints_used += 1
         elif ask_hint == 'n' or hints_used == max_hints:
             break
         else:
-            print("❌ Invalid input or max hints used.")
+            print("❌ Invalid input.")
 
     # Get the player's guess
     guess = input("\n🧠 Guess the cocktail: ").strip()
@@ -216,10 +214,6 @@ def display_leaderboard(scores):
     for player, score in sorted_scores:
         print(f"{player}: {score} points")
 
-    #winner = sorted_scores[0]
-    #print(f"\nThe 🎯winner is {winner[0]} with {winner[1]} points! Congratulations!")
-    #print("Thanks for playing Cocktail Connoisseur! 🍹")
-
 
 def celebrate_winner(players_scores):
     # Find the player(s) with the highest score
@@ -274,3 +268,4 @@ def play_game():
 
 if __name__ == "__main__":
     play_game()
+
