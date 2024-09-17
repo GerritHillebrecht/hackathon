@@ -50,7 +50,7 @@ def get_cocktail_hint(cocktail_name):
 def display_game_instructions():
     print("""
 ==================================================
-🍸 Welcome to *Cocktail Connoisseur* 🍸
+     🍸 Welcome to *Cocktail Connoisseur* 🍸
 ==================================================
 
 How to Play:
