@@ -1,7 +1,36 @@
 import requests
 from bs4 import BeautifulSoup
 import random
+from colorama import Fore, Style
 from cocktails import cocktails
+
+
+def display_game_instructions():
+    print("""
+{Fore.BLUE}==================================================
+     🍸 Welcome to *Cocktail Connoisseur* 🍸
+=================================================={Style.RESET_ALL}
+
+How to Play:
+1. In each round, you will be given a list of ingredients for a cocktail.
+2. Your task is to guess the name of the cocktail based on those ingredients.
+3. If you're stuck, you can type 'hint' to get a clue, but using hints will reduce your score.
+4. After making your guess, you'll find out if you're correct or not.
+
+{Fore.GREEN}Game Objective:{Style.RESET_ALL}
+🎯 Score as many points as possible by guessing cocktails correctly!
+
+{Fore.YELLOW}Scoring:{Style.RESET_ALL}
+✅ Correct guess without a hint: Full points!
+💡 Correct guess after using hints: Reduced points.
+❌ Wrong guess: No points for that round.
+
+{Fore.RED}Tips:{Style.RESET_ALL}
+🧠 Think carefully before using a hint — sometimes the ingredients might be all you need!😉:
+
+{Fore.BLUE}=================================================={Style.RESET_ALL}
+Let's get started!
+""")
 
 
 def get_cocktail_ingredients(cocktail_wikipedia):
@@ -49,32 +78,41 @@ def get_cocktail_hint(cocktail_name):
     return hints
 
 
-def display_game_instructions():
-    print("""
-==================================================
-     🍸 Welcome to *Cocktail Connoisseur* 🍸
-==================================================
+def provide_hints(cocktail_name, max_hints):
+    """
+    Handles the process of asking the player if they would like a hint
+    and providing hints from Wikipedia up to a maximum limit.
 
-How to Play:
-1. In each round, you will be given a list of ingredients for a cocktail.
-2. Your task is to guess the name of the cocktail based on those ingredients.
-3. If you're stuck, you can type 'hint' to get a clue, but using hints will reduce your score.
-4. After making your guess, you'll find out if you're correct or not.
+    Args:
+    cocktail_wikipedia (str): Wikipedia title of the cocktail to fetch hints for.
+    max_hints (int): Maximum number of hints to provide to the player. Default is 2.
 
-Game Objective:
-🎯 Score as many points as possible by guessing cocktails correctly!
+    Returns:
+    int: The number of hints used by the player.
+    """
+    hints_used = 0
+    hints = get_cocktail_hint(cocktail_name)
 
-Scoring:
-✅ Correct guess without a hint: Full points!
-💡 Correct guess after using hints: Reduced points.
-❌ Wrong guess: No points for that round.
+    if not hints or len(hints) < max_hints:
+        print("No hints available for this cocktail.")
+        return hints_used
 
-Tips:
-🧠 Think carefully before using a hint—sometimes the ingredients might be all you need!
+    while hints_used < max_hints:
+        ask_hint = input("\n💡 Would you like a hint? (y/n): ").strip().lower()
 
-==================================================
-Let's get started!
-""")
+        if ask_hint == 'y':
+            if hints_used < len(hints):
+                print(f"\n💡 Hint {hints_used + 1}: {hints[hints_used]}")
+                hints_used += 1
+            else:
+                print("\n❌ No more hints available.")
+                break
+        elif ask_hint == 'n':
+            break
+        else:
+            print("❌ Invalid input. Please enter 'y' or 'n'.")
+
+    return hints_used
 
 
 def play_round(player, difficulty):
@@ -100,25 +138,13 @@ def play_round(player, difficulty):
         print(f"Could not find ingredients for {cocktail_name}. Skipping...")
         return 0
 
-    print(f"\n{player}, here are the ingredients for this cocktail:")
+    print(f"\n{player}, here are the ingredients for this cocktail:\n")
     for ingredient in ingredients:
         print(f"- {ingredient}")
 
     # Allow player to request hints
-    hints_used = 0
     max_hints = 2
-    while True:
-        ask_hint = input("\n💡 Would you like a hint? (y/n): ").strip().lower()
-        if ask_hint == 'y' and hints_used < max_hints:
-            hints = get_cocktail_hint(cocktail_wikipedia)
-            print("\n💡 Hint: ", hints[hints_used])
-            hints_used += 1
-            if hints_used == max_hints:
-                break
-        elif ask_hint == 'n' or hints_used == max_hints:
-            break
-        else:
-            print("❌ Invalid input.")
+    hints_used = provide_hints(cocktail_name, max_hints)
 
     # Get the player's guess
     guess = input("\n🧠 Guess the cocktail: ").strip()
@@ -212,7 +238,7 @@ def display_leaderboard(scores):
     Args:
         scores (dict): A dictionary with player names as keys and their scores as values.
     """
-    print("\n=== Leaderboard ===")
+    print(f"{Fore.BLUE}\n=== Leaderboard ==={Style.RESET_ALL}")
     sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
     for player, score in sorted_scores:
@@ -233,8 +259,8 @@ def celebrate_winner(players_scores):
     🔄 Why not try again and sharpen your cocktail knowledge? 🔄
     """)
         else:
-            print(f"""
-    🎉🎉🎉 CONGRATULATIONS {winner}! 🎉🎉🎉
+            print(f"""{Fore.RED}
+    🎉🎉🎉 CONGRATULATIONS {winner}! 🎉🎉🎉{Style.RESET_ALL}
     🏆 You are the Cocktail Connoisseur Champion! 🏆
     🥂 You scored {players_scores[winner]} points! 🥂
     🍾 Time to celebrate with your favorite drink! 🍾
@@ -268,7 +294,7 @@ def play_game():
 
     # Play the specified number of rounds
     for round_num in range(num_of_rounds):
-        print(f"\n=== Round {round_num + 1} ===")
+        print(f"{Fore.BLUE}\n=== Round {round_num + 1} ==={Style.RESET_ALL}")
         for player in players:
             print(f"\n{player}'s turn:")
             scores[player] += play_round(player, difficulty)
@@ -280,4 +306,4 @@ def play_game():
 
 if __name__ == "__main__":
     play_game()
-
+    
