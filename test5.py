@@ -1,14 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import random
+from colorama import Fore, Style
 from cocktails import cocktails
 
 
 def display_game_instructions():
     print("""
-==================================================
-🍸 Welcome to *Cocktail Connoisseur* 🍸
-==================================================
+{Fore.BLUE}==================================================
+     🍸 Welcome to *Cocktail Connoisseur* 🍸
+=================================================={Style.RESET_ALL}
 
 How to Play:
 1. In each round, you will be given a list of ingredients for a cocktail.
@@ -16,18 +17,18 @@ How to Play:
 3. If you're stuck, you can type 'hint' to get a clue, but using hints will reduce your score.
 4. After making your guess, you'll find out if you're correct or not.
 
-Game Objective:
+{Fore.GREEN}Game Objective:{Style.RESET_ALL}
 🎯 Score as many points as possible by guessing cocktails correctly!
 
-Scoring:
+{Fore.YELLOW}Scoring:{Style.RESET_ALL}
 ✅ Correct guess without a hint: Full points!
 💡 Correct guess after using hints: Reduced points.
 ❌ Wrong guess: No points for that round.
 
-Tips:
+{Fore.RED}Tips:{Style.RESET_ALL}
 🧠 Think carefully before using a hint — sometimes the ingredients might be all you need!😉:
 
-==================================================
+{Fore.BLUE}=================================================={Style.RESET_ALL}
 Let's get started!
 """)
 
@@ -237,7 +238,7 @@ def display_leaderboard(scores):
     Args:
         scores (dict): A dictionary with player names as keys and their scores as values.
     """
-    print("\n=== Leaderboard ===")
+    print(f"{Fore.BLUE}\n=== Leaderboard ==={Style.RESET_ALL}")
     sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
     for player, score in sorted_scores:
@@ -258,8 +259,8 @@ def celebrate_winner(players_scores):
     🔄 Why not try again and sharpen your cocktail knowledge? 🔄
     """)
         else:
-            print(f"""
-    🎉🎉🎉 CONGRATULATIONS {winner}! 🎉🎉🎉
+            print(f"""{Fore.RED}
+    🎉🎉🎉 CONGRATULATIONS {winner}! 🎉🎉🎉{Style.RESET_ALL}
     🏆 You are the Cocktail Connoisseur Champion! 🏆
     🥂 You scored {players_scores[winner]} points! 🥂
     🍾 Time to celebrate with your favorite drink! 🍾
@@ -293,7 +294,7 @@ def play_game():
 
     # Play the specified number of rounds
     for round_num in range(num_of_rounds):
-        print(f"\n=== Round {round_num + 1} ===")
+        print(f"{Fore.BLUE}\n=== Round {round_num + 1} ==={Style.RESET_ALL}")
         for player in players:
             print(f"\n{player}'s turn:")
             scores[player] += play_round(player, difficulty)
