@@ -6,7 +6,7 @@ from cocktails import cocktails
 
 
 def display_game_instructions():
-    print("""
+    print(f"""
 {Fore.BLUE}==================================================
      🍸 Welcome to *Cocktail Connoisseur* 🍸
 =================================================={Style.RESET_ALL}
