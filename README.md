@@ -13,19 +13,6 @@
 ## Description
 In **Cocktail Connoisseur**, players are presented with a list of ingredients for a cocktail and must guess the name of the cocktail. The game includes hints to help players, but using hints will reduce their score. The objective is to score as many points as possible by guessing cocktails correctly.
 
-## Installation
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/cocktail-connoisseur.git
-    ```
-2. Navigate to the project directory:
-    ```bash
-    cd cocktail-connoisseur
-    ```
-3. Install the required dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
 
 ## Usage
 1. Run the game:
